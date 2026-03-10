@@ -41,7 +41,7 @@ BANNER = r"""
  ##:::: ##: ##:::: ##: ##:::. ##: ########:: ########: ##::. ##:'####: ##::. ##:. ######:::
 ..:::::..::..:::::..::..:::::..::........:::........::..::::..::....::..::::..:::......::::
 
-    Linux Server Hardening Audit Tool  [ADVANCED EDITION - 100+ Checks]
+    Linux Server Hardening Audit Tool  [ADVANCED EDITION - 180+ Checks]
     Created by  : opsecramdan
     Mode        : Read-Only | Non-Destructive | Production-Safe
     Purpose     : Comprehensive Security Posture Analysis
