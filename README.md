@@ -127,7 +127,7 @@ Designed to be used in:
 
 ```bash
 # Clone the repository
-git clone https://github.com/opsecramdan/linux-hardening-audit.git
+git clone [https://github.com/opsecramdan/linux-hardening-audit.git](https://github.com/opsecramdan/hardenLinux.git)
 
 # Enter the directory
 cd linux-hardening-audit
