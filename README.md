@@ -21,18 +21,20 @@
 
 # Linux Hardening Audit Tool
 
-**Advanced Edition — 129+ Security Checks across 17 Modules**
+**Advanced Edition — 180+ Security Checks across 19 Modules**
 
 [![Python](https://img.shields.io/badge/Python-3.6%2B-blue?style=flat-square&logo=python)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Linux-orange?style=flat-square&logo=linux)](https://kernel.org/)
 [![Mode](https://img.shields.io/badge/Mode-Read--Only-green?style=flat-square)](#)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![Author](https://img.shields.io/badge/Author-opsecramdan-red?style=flat-square)](https://github.com/opsecramdan)
-[![Checks](https://img.shields.io/badge/Security%20Checks-129%2B-brightgreen?style=flat-square)](#modules)
+[![Checks](https://img.shields.io/badge/Security%20Checks-180%2B-brightgreen?style=flat-square)](#modules)
+[![Modules](https://img.shields.io/badge/Modules-19-blue?style=flat-square)](#modules)
 
 > 🔐 A production-safe, read-only Linux security hardening audit tool inspired by Lynis.
-> Performs 129+ automated checks, generates scored reports (0–100), and provides
-> actionable remediation guidance. **No system modification. No package installation. Safe on production.**
+> Performs **180+ automated checks** across **19 security modules**, generates scored reports (0–100),
+> and provides actionable remediation guidance.
+> **No system modification. No package installation. Safe on production.**
 
 </div>
 
@@ -43,6 +45,7 @@
 - [Overview](#-overview)
 - [Features](#-features)
 - [Modules](#-modules)
+- [What Gets Checked](#-what-gets-checked)
 - [Requirements](#-requirements)
 - [Installation](#-installation)
 - [Usage](#-usage)
@@ -50,6 +53,7 @@
 - [Output Files](#-output-files)
 - [Security Score](#-security-score)
 - [Supported Distributions](#-supported-distributions)
+- [Extending the Tool](#-extending-the-tool)
 - [Disclaimer](#-disclaimer)
 - [Author](#-author)
 
@@ -59,14 +63,15 @@
 
 **Linux Hardening Audit Tool** is a lightweight, read-only CLI security scanner built for Linux system administrators, security engineers, and DevSecOps professionals.
 
-It performs comprehensive security posture analysis across **17 security domains** — from SSH configuration and kernel sysctl hardening, to Docker container security, malware detection, PAM policies, and boot security — all without touching a single system configuration.
+It performs comprehensive security posture analysis across **19 security domains** — from SSH configuration and kernel sysctl hardening, to Docker container security, malware detection, PAM policies, advanced permission auditing, and executable/script security — all without touching a single system configuration.
 
 Designed to be used in:
 - **Pre-deployment server hardening audits**
 - **Regular compliance checks (CIS-aligned)**
 - **Penetration testing reconnaissance (own systems)**
-- **Security portfolio / DevSecOps tooling**
 - **Incident response baseline assessment**
+- **Security portfolio / DevSecOps tooling**
+- **CTF / lab environment security validation**
 
 ---
 
@@ -75,15 +80,17 @@ Designed to be used in:
 | Feature | Description |
 |---|---|
 | 🔒 **Read-Only Mode** | Never modifies, installs, or changes anything on the system |
-| ✅ **129+ Security Checks** | Comprehensive coverage across 17 security modules |
-| 🎯 **Security Score (0–100)** | Weighted score with per-section breakdown |
+| ✅ **180+ Security Checks** | Comprehensive coverage across 19 security modules |
+| 🎯 **Security Score (0–100)** | Weighted score with per-section breakdown bar |
 | 🟢🟡🔴 **PASS / WARNING / FAIL** | Color-coded findings with risk levels (LOW / MEDIUM / HIGH / CRITICAL) |
 | 🛠️ **Remediation Guidance** | Every finding includes a concrete fix command |
-| 📄 **JSON Export** | Machine-readable report for integration with SIEM / dashboards |
-| 🐧 **Multi-Distro Support** | Ubuntu, Debian, CentOS, Rocky Linux, AlmaLinux |
+| 📄 **JSON Export** | Machine-readable report auto-saved after every run |
+| 🐧 **Multi-Distro Support** | Ubuntu, Debian, CentOS, Rocky Linux, AlmaLinux, Kali, Parrot |
 | 🧩 **Modular Architecture** | Each module is an independent function — easy to extend |
-| ⚡ **Zero Dependencies** | Uses Python 3 standard library only |
+| ⚡ **Zero Dependencies** | Uses Python 3 standard library only — no pip install needed |
 | 🏭 **Production-Safe** | Tested to be safe on live production servers |
+| 🔍 **Script & Binary Audit** | Detects writable scripts, SUID shells, backdoors in /tmp |
+| 🗂️ **Permission Deep Scan** | Checks SSH keys, cron scripts, systemd services, \$PATH binaries |
 
 ---
 
@@ -101,25 +108,67 @@ Designed to be used in:
 | 08 | 📁 File System Security | 10 | SUID/SGID, world-writable, critical perms, /tmp |
 | 09 | ⏰ Cron Security | 6 | Suspicious patterns, cron.allow, user crontabs |
 | 10 | 🔓 Sudo Security | 6 | NOPASSWD, wildcards, logging, requiretty |
-| 11 | 🧠 Kernel Security | 15 | sysctl parameters, ASLR, SYN cookies, IP fwd |
+| 11 | 🧠 Kernel Security | 15 | sysctl parameters, ASLR, SYN cookies, IP forwarding |
 | 12 | 📋 Logging & Auditing | 8 | rsyslog, auditd, journald, log file permissions |
 | 13 | 🔒 PAM Security | 6 | faillock, pwhistory, SHA-512, su restriction |
 | 14 | 🐳 Container Security | 6 | Docker socket, TCP API, privileged containers |
 | 15 | 🦠 Malware Detection | 4 | rkhunter, chkrootkit, ClamAV, suspicious procs |
 | 16 | 📦 Package Security | 5 | Pending updates, security patches, debsums |
 | 17 | 🥾 Boot Security | 4 | GRUB password, Secure Boot, single-user auth |
-| | **TOTAL** | **129+** | |
+| 18 | 🔑 Advanced Permission Audit | 30+ | Critical files, SSH keys, \$PATH, cron dirs, sudoers.d |
+| 19 | 📜 Script & Executable Audit | 11 | Writable scripts, SUID shells, /tmp executables, symlinks |
+| | **TOTAL** | **180+** | |
+
+---
+
+## 🔬 What Gets Checked
+
+### Module 18 — Advanced Permission Audit
+Checks for dangerous file permission misconfigurations that lead to real exploits:
+
+| File / Directory | Risk if Wrong | Exploit |
+|---|---|---|
+| `/etc/passwd` writable | CRITICAL | Add UID 0 account without password |
+| `/etc/shadow` readable | CRITICAL | Extract and crack password hashes |
+| `/etc/sudoers` writable | CRITICAL | Grant self full root sudo access |
+| `/etc/ssh/sshd_config` writable | CRITICAL | Insert SSH backdoor |
+| `~/.ssh/authorized_keys` writable | CRITICAL | Inject attacker SSH public key |
+| `~/.ssh/` directory writable | CRITICAL | Replace authorized_keys |
+| `~/.bashrc` / `~/.profile` writable | HIGH | Inject backdoor on every login |
+| `/etc/environment` writable | HIGH | Environment variable injection |
+| `/etc/ld.so.conf` writable | HIGH | Library hijacking (LD_PRELOAD) |
+| `$PATH` directories world-writable | CRITICAL | Binary hijacking |
+| `/root` directory not 700 | HIGH | Root home accessible by others |
+| `/etc/cron.d/` files writable | CRITICAL | Inject root cron job |
+| `/etc/sudoers.d/` files writable | CRITICAL | Escalate to root via sudo |
+
+### Module 19 — Script & Executable Audit
+Detects dangerous script and binary permission issues:
+
+| Check | Risk | Exploit |
+|---|---|---|
+| World-writable `.sh` `.py` `.pl` files | CRITICAL | Script content replacement |
+| World-writable executable binaries | CRITICAL | Binary hijacking |
+| Cron-executed scripts that are writable | CRITICAL | Root code execution via cron |
+| Writable systemd `.service` files | CRITICAL | Persistent backdoor on reboot |
+| Writable `ExecStart` binaries in services | CRITICAL | Service binary replacement |
+| Writable `/etc/init.d/` scripts | CRITICAL | Boot-time backdoor injection |
+| SUID set on shell scripts | CRITICAL | Direct privilege escalation |
+| Executables found in `/tmp` or `/var/tmp` | HIGH | Malware staging detection |
+| Symlinks pointing to `/tmp` in sensitive dirs | HIGH | Symlink attack |
+| Group-writable binaries in `$PATH` | HIGH | PATH-based binary hijacking |
+| Non-root owned files in `/usr/local/bin` | HIGH | Supply chain / binary tampering |
 
 ---
 
 ## 📋 Requirements
 
-- **Python 3.6+** (uses standard library only — no pip install needed)
-- **Linux** (any systemd-based distribution)
-- **Root / sudo privileges** recommended for full audit coverage
+- **Python 3.6+** — standard library only, no pip install needed
+- **Linux** — any systemd-based distribution
+- **Root / sudo privileges** — recommended for full audit coverage
 
 > Running without root will still execute most checks, but some modules
-> (shadow file, sysctl, firewall, Docker) may produce incomplete results.
+> (shadow file, sysctl, firewall, Docker, advanced permissions) may produce incomplete results.
 
 ---
 
@@ -143,25 +192,21 @@ No virtual environment or pip install required. Pure Python 3 standard library.
 ## 💻 Usage
 
 ### Basic Run
-
 ```bash
 python3 linux_hardening_audit_advanced.py
 ```
 
-### Full Audit (Recommended — Root Access)
-
+### Full Audit — Recommended (Root Access)
 ```bash
 sudo python3 linux_hardening_audit_advanced.py
 ```
 
 ### Save Terminal Output
-
 ```bash
 sudo python3 linux_hardening_audit_advanced.py | tee audit_$(hostname)_$(date +%Y%m%d).txt
 ```
 
 ### View JSON Report
-
 ```bash
 # JSON is auto-generated after every run
 cat audit_YYYYMMDD_HHMMSS.json | python3 -m json.tool
@@ -173,32 +218,29 @@ cat audit_YYYYMMDD_HHMMSS.json | python3 -m json.tool
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  🔐  [SSH SECURITY]
+  📜  [SCRIPT & EXECUTABLE PERMISSION AUDIT]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  ✔ PermitRootLogin [LOW]
-    → PermitRootLogin is properly configured (no).
-  ✘ PasswordAuthentication [MEDIUM]
-    → PasswordAuthentication = 'yes'. Brute-force risk.
-    Fix: Use SSH keys only. Set 'PasswordAuthentication no'.
-  ✔ PermitEmptyPasswords [LOW]
-    → PermitEmptyPasswords is disabled.
-  ✘ SSH Weak Ciphers [HIGH]
-    → Weak ciphers configured: aes128-cbc, 3des-cbc
-    Fix: Remove weak ciphers from sshd_config Ciphers directive.
-  ⚠ SSH Banner [LOW]
-    → No SSH warning banner configured.
-    Fix: Set 'Banner /etc/issue.net' with a legal warning.
+  ✔ World-Writable Script Files [LOW]
+    → No world-writable script files found ✓
+  ✘ Executable Files in /tmp or /var/tmp [HIGH]
+    → 2 executable file(s) in /tmp: /tmp/update.sh, /tmp/.x
+    Fix: Investigate immediately — common malware staging location.
+  ✔ Suspicious Symlinks in Sensitive Dirs [LOW]
+    → No suspicious symlinks in sensitive directories ✓
+  ✘ Writable Scripts Called by Cron [CRITICAL]
+    → Cron-executed scripts that are writable: /opt/backup.sh (0o777)
+    Fix: chmod 700 on cron scripts — writable cron script = root code execution!
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  🧠  [KERNEL SECURITY (sysctl)]
+  🔑  [ADVANCED PERMISSION SECURITY]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  ✔ net.ipv4.ip_forward [LOW]
-    → net.ipv4.ip_forward = 0 ✓
-  ✔ net.ipv4.tcp_syncookies [LOW]
-    → net.ipv4.tcp_syncookies = 1 ✓
-  ✘ kernel.randomize_va_space [HIGH]
-    → kernel.randomize_va_space = 1 (expected 2). Full ASLR not enabled.
-    Fix: sysctl -w kernel.randomize_va_space=2
+  ✔ Perms: /etc/passwd [LOW]
+    → /etc/passwd permissions 0o644 ✓
+  ✔ Perms: /etc/shadow [LOW]
+    → /etc/shadow permissions 0o640 ✓
+  ✘ authorized_keys: ramdan [CRITICAL]
+    → /home/ramdan/.ssh/authorized_keys is 0o644 — SSH key injection possible!
+    Fix: chmod 600 /home/ramdan/.ssh/authorized_keys
 
 ════════════════════════════════════════════════════════════════
     LINUX SECURITY AUDIT — COMPREHENSIVE REPORT SUMMARY
@@ -207,40 +249,35 @@ cat audit_YYYYMMDD_HHMMSS.json | python3 -m json.tool
   Hostname   : prod-server-01
   Audited By : opsecramdan — Linux Hardening Audit Tool
 ────────────────────────────────────────────────────────────────
-  Total Checks : 129
-  PASS         : 87
+  Total Checks : 183
+  PASS         : 141
   WARNING      : 28
   FAIL         : 14
 ────────────────────────────────────────────────────────────────
 
-  SECURITY SCORE: 74/100  [GOOD ✅]
-  0 [████████████████░░░░] 100
+  SECURITY SCORE: 76/100  [GOOD ✅]
+  0 [███████████████░░░░░] 100
 
   SCORE BY SECTION:
   System Information        [██████████] 100%
   User Security             [████████░░]  83%
-  Password Policy           [███████░░░]  75%
   SSH Security              [██████░░░░]  64%
-  Network Security          [████████░░]  87%
-  Firewall Status           [█████████░]  90%
-  Running Services          [██████████] 100%
-  File System Security      [███████░░░]  70%
   Kernel Security           [██████░░░░]  60%
-  Logging & Auditing        [████████░░]  80%
+  Adv. Permission Audit     [████████░░]  82%
+  Script & Exec Perms       [███████░░░]  72%
 ```
 
 ---
 
 ## 📁 Output Files
 
-Every run automatically generates a JSON report:
+Every run automatically generates a timestamped JSON report:
 
 ```
 audit_20250115_143207.json
 ```
 
 **JSON Structure:**
-
 ```json
 {
   "meta": {
@@ -248,28 +285,20 @@ audit_20250115_143207.json
     "author": "opsecramdan",
     "timestamp": "2025-01-15T14:32:07",
     "hostname": "prod-server-01",
-    "score": 74,
-    "total": 129,
-    "pass": 87,
+    "score": 76,
+    "total": 183,
+    "pass": 141,
     "warning": 28,
     "fail": 14
   },
   "findings": [
     {
-      "section": "SSH Security",
-      "check": "PermitRootLogin",
-      "status": "PASS",
-      "risk": "LOW",
-      "explanation": "PermitRootLogin is properly configured (no).",
-      "recommendation": ""
-    },
-    {
-      "section": "SSH Security",
-      "check": "PasswordAuthentication",
-      "status": "WARNING",
-      "risk": "MEDIUM",
-      "explanation": "PasswordAuthentication = 'yes'. Brute-force risk.",
-      "recommendation": "Set 'PasswordAuthentication no' and use SSH keys."
+      "section": "Script Perms",
+      "check": "Writable Scripts Called by Cron",
+      "status": "FAIL",
+      "risk": "CRITICAL",
+      "explanation": "Cron-executed scripts that are writable: /opt/backup.sh (0o777)",
+      "recommendation": "chmod 700 on cron scripts — writable cron script = root code execution!"
     }
   ]
 }
@@ -311,31 +340,31 @@ Score = ((PASS × 1.0) + (WARNING × 0.5)) / Total Checks × 100
 | Rocky Linux 8 / 9 | ✅ Supported |
 | AlmaLinux 8 / 9 | ✅ Supported |
 | Kali Linux | ✅ Supported |
+| Parrot OS | ✅ Supported |
 | Fedora 36+ | ✅ Supported |
 
 ---
 
 ## ⚙️ Extending the Tool
 
-The modular design makes it easy to add new checks:
+The modular design makes it easy to add new checks. Each module follows the same pattern:
 
 ```python
 def my_custom_check():
     section_header("MY CUSTOM MODULE", "🔧")
 
-    # Your check logic
     result = read_file("/etc/myconfig")
 
     if "secure_setting" in result:
         add_finding("Custom", "My Check", "PASS", "LOW",
-                    "Setting is secure.", "")
+                    "Setting is secure ✓", "")
     else:
         add_finding("Custom", "My Check", "FAIL", "HIGH",
                     "Setting is insecure.",
                     "Set secure_setting=yes in /etc/myconfig.")
 ```
 
-Then register it in `main()`:
+Register it in `main()`:
 
 ```python
 modules = [
