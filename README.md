@@ -130,7 +130,7 @@ Designed to be used in:
 git clone https://github.com/opsecramdan/hardenLinux.git
 
 # Enter the directory
-cd linux-hardening-audit
+cd hardenLinux
 
 # Make executable
 chmod +x linux_hardening_audit_advanced.py
