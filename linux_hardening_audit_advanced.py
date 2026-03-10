@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Linux Server Hardening Audit Tool - ADVANCED EDITION (100+ Checks)
+Linux Server Hardening Audit Tool - ADVANCED EDITION (180+ Checks)
 Created by: opsecramdan
 Description: Read-only security audit script for Linux servers
              Safe to run on production systems.
